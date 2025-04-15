@@ -1,0 +1,22 @@
+name: Sync Anime Data
+
+on:
+  repository_dispatch:
+    types: [sync-request]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ACTIONS_TOKEN }}
+          
+      - name: Update JSON Data
+        run: |
+          echo '${{ toJson(github.event.client_payload.data) }}' > anime_data.json
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update anime data [skip ci]"
+          git push
